@@ -180,49 +180,25 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
       bottomNavigationBar: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          // Transparent gradient background container
-          Opacity(
-            opacity: 0.05, // Set 5% opacity
-            child: Container(
-              width: double.infinity,
-              height: 107,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment(1.00, 0.00),
-                  end: Alignment(-1, 0),
-                  colors: [Color(0xFFF5799C), Color(0xFF70C2FC)],
+          Container(
+            child: BottomNavigationBar(
+              currentIndex: currentTabIndex,
+              onTap: (index) {
+                ref.read(providerPrimaryBottomNavTabIndex.notifier).state = index;
+              },
+              items: [
+                BottomNavigationBarItem(
+                  label: "Home",
+                  activeIcon: Icon(FontAwesomeIcons.house),
+                  icon: Icon(FontAwesomeIcons.house),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x3F000000),
-                    blurRadius: 4,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  )
-                ],
-              ),
+                BottomNavigationBarItem(
+                  label: "Alternate",
+                  activeIcon: Icon(FontAwesomeIcons.building),
+                  icon: Icon(FontAwesomeIcons.building),
+                ),
+              ],
             ),
-          ),
-          // BottomNavigationBar on top of the transparent background
-          BottomNavigationBar(
-            currentIndex: currentTabIndex,
-            onTap: (index) {
-              ref.read(providerPrimaryBottomNavTabIndex.notifier).state = index;
-            },
-            items: [
-              BottomNavigationBarItem(
-                label: "Home",
-                activeIcon: Icon(FontAwesomeIcons.house),
-                icon: Icon(FontAwesomeIcons.house),
-              ),
-              BottomNavigationBarItem(
-                label: "Alternate",
-                activeIcon: Icon(FontAwesomeIcons.building),
-                icon: Icon(FontAwesomeIcons.building),
-              ),
-            ],
-            backgroundColor: Colors
-                .transparent, // No background to let gradient show through
           ),
         ],
       ),
