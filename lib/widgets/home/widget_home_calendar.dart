@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 
+class Event {
+  final String time;
+  final String label;
+  final String location;
+  final Color color;
+
+  Event({
+    required this.time,
+    required this.label,
+    required this.location,
+    required this.color,
+  });
+}
+
 class CustomEventCard extends StatelessWidget {
   final String date;
   final String month;
@@ -19,24 +33,15 @@ class CustomEventCard extends StatelessWidget {
     return Container(
       width: 200,
       height: 232,
+      decoration: ShapeDecoration(
+        color: Color(0xFFF2F2F2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+      ),
       child: Stack(
         children: [
-          // Background Container
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Container(
-              width: 200,
-              height: 232,
-              decoration: ShapeDecoration(
-                color: Color(0xFFF2F2F2),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-            ),
-          ),
-          // Date, Month, Day
+          // Date display at the top
           Positioned(
             left: 98,
             top: 8,
@@ -76,16 +81,20 @@ class CustomEventCard extends StatelessWidget {
               ),
             ),
           ),
-          // Events List
-          for (var i = 0; i < events.length; i++)
-            Positioned(
+          // Loop through each event and display it with dynamic positioning
+          ...List.generate(events.length, (index) {
+            final event = events[index];
+            final topPosition = 85 + index * 47.0; // Dynamically position each event
+
+            return Positioned(
               left: 22,
-              top: 85.0 + 47 * i,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              top: topPosition,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Time display
                   Text(
-                    events[i].time,
+                    event.time,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 12,
@@ -93,59 +102,57 @@ class CustomEventCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  Text(
-                    events[i].label,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w500,
+                  SizedBox(width: 10),
+                  // Vertical color indicator for event
+                  Container(
+                    width: 3,
+                    height: 30, // Height of the vertical line
+                    decoration: BoxDecoration(
+                      color: event.color,
+                      borderRadius: BorderRadius.circular(1.5),
                     ),
+                  ),
+                  SizedBox(width: 10),
+                  // Event label and location with icon in a Column
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        event.label,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            size: 8,
+                            color: Colors.black,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            event.location,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 8,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
-          for (var i = 0; i < events.length; i++)
-            Positioned(
-              left: 83,
-              top: 85.0 + 47 * i,
-              child: Transform.rotate(
-                angle: 1.57,
-                child: Container(
-                  width: 31,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 3,
-                        color: events[i].color,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          for (var i = 0; i < events.length; i++)
-            Positioned(
-              left: 101,
-              top: 108.0 + 47 * i,
-              child: Container(
-                width: 7,
-                height: 7,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(),
-                child: FlutterLogo(),
-              ),
-            ),
+            );
+          }),
         ],
       ),
     );
   }
-}
-
-class Event {
-  final String time;
-  final String label;
-  final Color color;
-
-  Event({required this.time, required this.label, required this.color});
 }
