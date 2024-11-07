@@ -39,31 +39,47 @@ class CalendarOverview extends StatelessWidget {
               ),
             ),
           ),
-          // Left icon for navigation
+          // Chevron down icon for month selection
           Positioned(
             left: 126,
             top: 23,
-            child: Container(
-              width: 17,
-              height: 17,
-              child: FlutterLogo(), // Placeholder for an icon
+            child: Icon(
+              Icons.expand_more, // Chevron down icon
+              size: 17,
+              color: Colors.black,
             ),
           ),
-          // Right icon for navigation
+          // Plus icon for adding events
           Positioned(
             left: 297,
             top: 23,
+            child: Icon(
+              Icons.add, // Plus icon
+              size: 15,
+              color: Colors.black,
+            ),
+          ),
+          // Horizontal line below the month and above weekday labels
+          Positioned(
+            left: 0, // Align the line with the container's left edge
+            top: 60,
             child: Container(
-              width: 15,
-              height: 15,
-              child: FlutterLogo(), // Placeholder for an icon
+              width: 340, // Set width to match the container
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    width: 1,
+                    color: Color(0xFFE6E6E6),
+                  ),
+                ),
+              ),
             ),
           ),
           // Weekday labels
           ..._buildWeekdayLabels(),
           // Date circles
           ..._buildDateCircles(),
-          // Date numbers
+          // Date numbers (centered in circles)
           ..._buildDateNumbers(),
         ],
       ),
@@ -110,21 +126,26 @@ class CalendarOverview extends StatelessWidget {
     );
   }
 
-  // Helper method to create date numbers
+  // Helper method to create date numbers centered in circles
   List<Widget> _buildDateNumbers() {
     const dates = ['27', '28', '29', '30', '31', '1', '2'];
     return List.generate(
       dates.length,
       (index) => Positioned(
-        left: 32.0 + index * 44,
-        top: 104,
-        child: Text(
-          dates[index],
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 12,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w500,
+        left: 25.0 + index * 44,
+        top: 97, // Aligns with the circle's top position
+        child: Container(
+          width: 30,
+          height: 29,
+          alignment: Alignment.center, // Centers the text within the container
+          child: Text(
+            dates[index],
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 12,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),
