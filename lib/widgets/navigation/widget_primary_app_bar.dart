@@ -1,3 +1,8 @@
+//Top right corner add button removed from home and chat page
+
+
+
+
 // -----------------------------------------------------------------------
 // Filename: screen_home.dart
 // Original Author: Dan Grissom
@@ -77,11 +82,12 @@ class _PrimaryAppBar extends ConsumerState<WidgetPrimaryAppBar> {
       title: widget.title,
       elevation: 0,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.add, color: CustomColors.statusError),
-          onPressed: () =>
-              Snackbar.show(SnackbarDisplayType.SB_INFO, 'You clicked the action button in the app bar!', context),
-        ),
+        // Top right corner add button removed from home and chat page
+        // IconButton(
+        //   icon: const Icon(Icons.add, color: CustomColors.statusError),
+        //   onPressed: () =>
+        //       Snackbar.show(SnackbarDisplayType.SB_INFO, 'You clicked the action button in the app bar!', context),
+        // ),
         if (widget.actionButtons != null)
           ...widget.actionButtons!.map((e) {
             return e;
