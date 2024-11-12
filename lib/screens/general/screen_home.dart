@@ -72,16 +72,17 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
-        onPressed: () => Snackbar.show(
-          SnackbarDisplayType.SB_INFO,
-          'You clicked the floating button on the home screen!',
-          context,
-        ),
-        splashColor: Theme.of(context).primaryColor,
-        child: Icon(FontAwesomeIcons.plus),
-      ),
+      // Floating plus button on the bottom right or home screen corner removed cause it was ugly
+      // floatingActionButton: FloatingActionButton(
+      //   shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
+      //   onPressed: () => Snackbar.show(
+      //     SnackbarDisplayType.SB_INFO,
+      //     'You clicked the floating button on the home screen!',
+      //     context,
+      //   ),
+      //   splashColor: Theme.of(context).primaryColor,
+      //   child: Icon(FontAwesomeIcons.plus),
+      // ),
       body: SingleChildScrollView(
         child: Padding(
           padding:
