@@ -4,6 +4,7 @@
 // Creation Date: 6/06/2024
 // Copyright: (c) 2024 CSC322
 // Description: This file contains the screen for the tts settings.
+// Mckayla: Voice setting logic
 
 //////////////////////////////////////////////////////////////////////////
 // Imports

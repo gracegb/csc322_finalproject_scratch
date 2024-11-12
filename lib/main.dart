@@ -12,6 +12,7 @@
 // Dart imports
 
 // Flutter external package imports
+import 'package:csc322_starter_app/screens/account/screen_files.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
@@ -95,9 +96,14 @@ class _MyAppState extends State<MyApp> {
         path: ScreenLoginValidation.routeName,
         builder: (context, state) => const ScreenLoginValidation(),
       ),
+      // ScreenSettings is for the people screen i jsut tried to change the name and got errors🫤
       GoRoute(
         path: ScreenSettings.routeName,
         builder: (context, state) => ScreenSettings(),
+      ),
+      GoRoute(
+        path: ScreenFiles.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenFiles(),
       ),
       GoRoute(
         path: ScreenProfileEdit.routeName,
