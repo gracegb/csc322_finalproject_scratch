@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import '../../util/message_display/snackbar.dart';
 import '../../widgets/home/widget_home_calendar.dart';
 import '../../widgets/home/widget_home_attention.dart';
-import '../../widgets/home/widget_home_chats';
+import '../../widgets/home/widget_home_chats.dart';
 import '../../widgets/home/widget_home_bigcalendar.dart';
 
 //////////////////////////////////////////////////////////////////////////
