@@ -1,4 +1,6 @@
+import 'package:csc322_starter_app/providers/provider_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CalendarOverview extends StatelessWidget {
   const CalendarOverview({Key? key}) : super(key: key);
@@ -49,14 +51,19 @@ class CalendarOverview extends StatelessWidget {
               color: Colors.black,
             ),
           ),
-          // Plus icon for adding events
+          // Google Sign-In button in place of the plus icon
           Positioned(
             left: 297,
             top: 23,
-            child: Icon(
-              Icons.add, // Plus icon
-              size: 15,
-              color: Colors.black,
+            child: InkWell(
+              onTap: () async {
+                await context.read<ProviderAuth>().signInWithGoogle();
+              },
+              child: Icon(
+                Icons.login, // You can choose an icon that represents sign-in
+                size: 15,
+                color: Colors.black,
+              ),
             ),
           ),
           // Horizontal line below the month and above weekday labels
