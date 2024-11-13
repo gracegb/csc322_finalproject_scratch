@@ -1,161 +1,137 @@
 import 'package:csc322_starter_app/providers/provider_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
-class CalendarOverview extends StatelessWidget {
+class CalendarOverview extends StatefulWidget {
   const CalendarOverview({Key? key}) : super(key: key);
 
   @override
+  _CalendarOverviewState createState() => _CalendarOverviewState();
+}
+
+class _CalendarOverviewState extends State<CalendarOverview> {
+  DateTime _focusedDate = DateTime.now();
+  final DateTime _today = DateTime.now();
+
+  @override
   Widget build(BuildContext context) {
+    final currentMonth = DateFormat.yMMMM().format(_focusedDate);
+    final daysInMonth = DateTime(_focusedDate.year, _focusedDate.month + 1, 0).day;
+    final firstDayOffset = DateTime(_focusedDate.year, _focusedDate.month, 1).weekday % 7;
+
     return Container(
       width: 340,
-      height: 184,
-      child: Stack(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Color(0xFFF2F2F2),
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Column(
         children: [
-          // Background container with rounded corners
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Container(
-              width: 340,
-              height: 184,
-              decoration: ShapeDecoration(
-                color: Color(0xFFF2F2F2),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
+          // Month and year label with navigation buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(Icons.chevron_left, color: Colors.black),
+                onPressed: _previousMonth,
+              ),
+              Text(
+                currentMonth,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-          ),
-          // Month and year label
-          Positioned(
-            left: 35,
-            top: 23,
-            child: Text(
-              'October, 2024',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
+              IconButton(
+                icon: Icon(Icons.chevron_right, color: Colors.black),
+                onPressed: _nextMonth,
               ),
-            ),
+            ],
           ),
-          // Chevron down icon for month selection
-          Positioned(
-            left: 126,
-            top: 23,
+          // Horizontal divider
+          Divider(color: Color(0xFFE6E6E6)),
+          // Weekday labels
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: const [
+              Text('S', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
+              Text('M', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
+              Text('T', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
+              Text('W', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
+              Text('T', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
+              Text('F', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
+              Text('S', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Date Grid
+          GridView.builder(
+            physics: NeverScrollableScrollPhysics(), // Prevents nested scrolling issues
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7, // 7 days in a week
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 1,
+            ),
+            itemCount: firstDayOffset + daysInMonth,
+            itemBuilder: (context, index) {
+              // Empty spaces for days of the previous month
+              if (index < firstDayOffset) {
+                return Container(); // Empty cell
+              }
+              final dayNumber = index - firstDayOffset + 1;
+              // Check if this day is the current date
+              final isToday = _focusedDate.year == _today.year &&
+                  _focusedDate.month == _today.month &&
+                  dayNumber == _today.day;
+              return Container(
+                decoration: ShapeDecoration(
+                  color: isToday ? Color(0xFFFFF3E3) : Color(0xFFD9D9D9), // Red for today, grey for other dates
+                  shape: OvalBorder(),
+                ),
+                child: Center(
+                  child: Text(
+                    '$dayNumber',
+                    style: TextStyle(
+                      color: isToday? Color(0xFF7C3030) : Colors.black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          // Google Sign-In button
+          SizedBox(height: 16),
+          InkWell(
+            onTap: () async {
+              await context.read<ProviderAuth>().signInWithGoogle();
+            },
             child: Icon(
-              Icons.expand_more, // Chevron down icon
-              size: 17,
+              Icons.login,
+              size: 24,
               color: Colors.black,
             ),
           ),
-          // Google Sign-In button in place of the plus icon
-          Positioned(
-            left: 297,
-            top: 23,
-            child: InkWell(
-              onTap: () async {
-                await context.read<ProviderAuth>().signInWithGoogle();
-              },
-              child: Icon(
-                Icons.login, // You can choose an icon that represents sign-in
-                size: 15,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          // Horizontal line below the month and above weekday labels
-          Positioned(
-            left: 0, // Align the line with the container's left edge
-            top: 60,
-            child: Container(
-              width: 340, // Set width to match the container
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    width: 1,
-                    color: Color(0xFFE6E6E6),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Weekday labels
-          ..._buildWeekdayLabels(),
-          // Date circles
-          ..._buildDateCircles(),
-          // Date numbers (centered in circles)
-          ..._buildDateNumbers(),
         ],
       ),
     );
   }
 
-  // Helper method to create weekday labels
-  List<Widget> _buildWeekdayLabels() {
-    const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    return List.generate(
-      days.length,
-      (index) => Positioned(
-        left: 35.0 + index * 44,
-        top: 77,
-        child: Text(
-          days[index],
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 12,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
+  void _previousMonth() {
+    setState(() {
+      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
+    });
   }
 
-  // Helper method to create date circles
-  List<Widget> _buildDateCircles() {
-    return List.generate(
-      7,
-      (index) => Positioned(
-        left: 25.0 + index * 44,
-        top: 97,
-        child: Container(
-          width: 30,
-          height: 29,
-          decoration: ShapeDecoration(
-            color: Color(0xFFD9D9D9),
-            shape: OvalBorder(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Helper method to create date numbers centered in circles
-  List<Widget> _buildDateNumbers() {
-    const dates = ['27', '28', '29', '30', '31', '1', '2'];
-    return List.generate(
-      dates.length,
-      (index) => Positioned(
-        left: 25.0 + index * 44,
-        top: 97, // Aligns with the circle's top position
-        child: Container(
-          width: 30,
-          height: 29,
-          alignment: Alignment.center, // Centers the text within the container
-          child: Text(
-            dates[index],
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 12,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
-    );
+  void _nextMonth() {
+    setState(() {
+      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
+    });
   }
 }
