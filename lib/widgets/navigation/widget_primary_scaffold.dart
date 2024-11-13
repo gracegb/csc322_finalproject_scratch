@@ -22,6 +22,7 @@ import '../../screens/general/screen_home.dart';
 import 'widget_primary_app_bar.dart';
 import 'widget_app_drawer.dart';
 import '../../main.dart';
+import '../../screens/general/screen_calendar.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // Localized provider for the current tab index
@@ -133,7 +134,9 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
       return ScreenHome();
     else if (currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index)
       return ScreenAlternate();
-    else
+    else if (currentTabIndex == BottomNavSelection.CALENDAR_SCREEN.index) {
+      return CalendarScreen();
+    } else
       return ScreenHome();
   }
 
@@ -184,7 +187,8 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
             child: BottomNavigationBar(
               currentIndex: currentTabIndex,
               onTap: (index) {
-                ref.read(providerPrimaryBottomNavTabIndex.notifier).state = index;
+                ref.read(providerPrimaryBottomNavTabIndex.notifier).state =
+                    index;
               },
               items: [
                 BottomNavigationBarItem(
@@ -196,6 +200,11 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
                   label: "Alternate",
                   activeIcon: Icon(FontAwesomeIcons.building),
                   icon: Icon(FontAwesomeIcons.building),
+                ),
+                BottomNavigationBarItem(
+                  label: "Calendar",
+                  activeIcon: Icon(FontAwesomeIcons.calendar),
+                  icon: Icon(FontAwesomeIcons.calendar),
                 ),
               ],
             ),

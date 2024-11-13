@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Dart imports
 
-// Flutter external package imports
+// Flutter external package  imports
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
