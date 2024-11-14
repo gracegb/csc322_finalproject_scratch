@@ -7,7 +7,7 @@ class WeekDaysRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: days.map((day) => CenteredText(day, fontSize: 16)).toList(),
     );
   }
