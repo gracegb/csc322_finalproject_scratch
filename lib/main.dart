@@ -14,6 +14,7 @@
 // Flutter external package imports
 import 'package:csc322_starter_app/screens/account/screen_files.dart';
 import 'package:csc322_starter_app/screens/account/screen_forms.dart';
+import 'package:csc322_starter_app/screens/account/screen_people.dart';
 import 'package:csc322_starter_app/screens/account/screen_sign_ups.dart';
 import 'package:csc322_starter_app/screens/account/screen_tasks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +29,6 @@ import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
 import 'screens/settings/screen_profile_edit.dart';
 import 'providers/provider_user_profile.dart';
-import 'screens/settings/screen_settings.dart';
 import 'providers/provider_auth.dart';
 import 'providers/provider_tts.dart';
 import 'util/file/util_file.dart';
@@ -99,10 +99,9 @@ class _MyAppState extends State<MyApp> {
         path: ScreenLoginValidation.routeName,
         builder: (context, state) => const ScreenLoginValidation(),
       ),
-      // ScreenSettings is for the people screen i jsut tried to change the name and got errors🫤
       GoRoute(
-        path: ScreenSettings.routeName,
-        builder: (context, state) => ScreenSettings(),
+        path: ScreenPeople.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenPeople(),
       ),
       GoRoute(
         path: ScreenFiles.routeName,

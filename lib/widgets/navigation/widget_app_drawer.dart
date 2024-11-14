@@ -12,6 +12,7 @@
 // Flutter external package imports
 import 'package:csc322_starter_app/screens/account/screen_files.dart';
 import 'package:csc322_starter_app/screens/account/screen_forms.dart';
+import 'package:csc322_starter_app/screens/account/screen_people.dart';
 import 'package:csc322_starter_app/screens/account/screen_sign_ups.dart';
 import 'package:csc322_starter_app/screens/account/screen_tasks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +22,6 @@ import 'package:flutter/material.dart';
 // App relative file imports
 import '../../screens/settings/screen_profile_edit.dart';
 import '../../providers/provider_user_profile.dart';
-import '../../screens/settings/screen_settings.dart';
 import '../general/widget_profile_avatar.dart';
 import '../../providers/provider_auth.dart';
 import '../../main.dart';
@@ -79,7 +79,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 onTap: () {
                   // Close the drawer
                   Navigator.of(context).pop();
-                  context.push(ScreenSettings.routeName, extra: false);
+                  context.push(ScreenPeople.routeName, extra: false);
                 },
               ),
               ListTile(
