@@ -11,12 +11,14 @@
 //////////////////////////////////////////////////////////////////////////
 // Flutter external package imports
 import 'package:csc322_starter_app/screens/account/screen_files.dart';
+import 'package:csc322_starter_app/screens/account/screen_forms.dart';
+import 'package:csc322_starter_app/screens/account/screen_sign_ups.dart';
+import 'package:csc322_starter_app/screens/account/screen_tasks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import '../../widgets/navigation/widget_primary_scaffold.dart';
 import '../../screens/settings/screen_profile_edit.dart';
 import '../../providers/provider_user_profile.dart';
 import '../../screens/settings/screen_settings.dart';
@@ -95,7 +97,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 onTap: () {
                   // Close the drawer
                   Navigator.of(context).pop();
-                  context.push(ScreenSettings.routeName, extra: false);
+                  context.push(ScreenForms.routeName, extra: false);
                 },
               ),
               ListTile(
@@ -104,7 +106,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 onTap: () {
                   // Close the drawer
                   Navigator.of(context).pop();
-                  context.push(ScreenSettings.routeName, extra: false);
+                  context.push(ScreenSignUps.routeName, extra: false);
                 },
               ),
               ListTile(
@@ -113,7 +115,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 onTap: () {
                   // Close the drawer
                   Navigator.of(context).pop();
-                  context.push(ScreenSettings.routeName, extra: false);
+                  context.push(ScreenTasks.routeName, extra: false);
                 },
               ),
               ListTile(

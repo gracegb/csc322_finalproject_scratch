@@ -1,8 +1,8 @@
 // -----------------------------------------------------------------------
-// Filename: screen_files.dart
+// Filename: screen_forms.dart
 // Original Author: Mckayla Guznan
-// Creation Date: 11/12/2024
-// Description: This file contains the screen for managing and viewing files
+// Creation Date: 11/13/2024
+// Description: This file contains the screen for managing and viewing forms
 
 //////////////////////////////////////////////////////////////////////////
 // Imports
@@ -11,24 +11,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 
-class ScreenFiles extends ConsumerStatefulWidget{
-  const ScreenFiles({super.key});
+class ScreenForms extends ConsumerStatefulWidget{
+  const ScreenForms({super.key});
 
-  static const routeName = '/files';
+  static const routeName = '/forms';
 
   @override
-  ConsumerState<ScreenFiles> createState() => _ScreenFilesState();
+  ConsumerState<ScreenForms> createState() => _ScreenFormsState();
 }
 
-class _ScreenFilesState extends ConsumerState<ScreenFiles> {
+class _ScreenFormsState extends ConsumerState<ScreenForms> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: WidgetPrimaryAppBar(
-        title: const Text('Files')
+        title: const Text('Forms')
       ),
       body: Center(
-        child: Text('This is the files page'),
+        child: Text('This is the forms page'),
       ),
     );
   }

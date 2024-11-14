@@ -13,6 +13,9 @@
 
 // Flutter external package imports
 import 'package:csc322_starter_app/screens/account/screen_files.dart';
+import 'package:csc322_starter_app/screens/account/screen_forms.dart';
+import 'package:csc322_starter_app/screens/account/screen_sign_ups.dart';
+import 'package:csc322_starter_app/screens/account/screen_tasks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
@@ -104,6 +107,18 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
         path: ScreenFiles.routeName,
         builder: (BuildContext context, GoRouterState state) => const ScreenFiles(),
+      ),
+      GoRoute(
+        path: ScreenForms.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenForms(),
+      ),
+      GoRoute(
+        path: ScreenSignUps.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenSignUps(),
+      ),
+      GoRoute(
+        path: ScreenTasks.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenTasks(),
       ),
       GoRoute(
         path: ScreenProfileEdit.routeName,

@@ -199,7 +199,7 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
                       : Text(voiceName),
                 );
               }).toList(),
-              onChanged: (dynamic? newValue) {
+              onChanged: (dynamic newValue) {
                 setState(() {
                   _selectedVoice = newValue;
                 });
