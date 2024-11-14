@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 // App relative file imports
 import 'screens/general/screen_alternate.dart';
 import 'screens/general/screen_home.dart';
+import 'screens/general/screen_calendar.dart';
 import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
 import 'screens/settings/screen_profile_edit.dart';
@@ -114,6 +115,10 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
         path: ScreenAlternate.routeName,
         builder: (BuildContext context, GoRouterState state) => ScreenAlternate(),
+      ),
+      GoRoute(
+        path: CalendarScreen.routeName,
+        builder: (BuildContext context, GoRouterState state) => CalendarScreen(),
       ),
     ],
   );
