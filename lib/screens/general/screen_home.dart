@@ -58,7 +58,6 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
 
   @override
   void initState() {
-    print('testing');
     super.initState();
   }
 

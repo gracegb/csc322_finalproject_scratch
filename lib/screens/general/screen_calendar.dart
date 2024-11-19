@@ -241,7 +241,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   List<Appointment> getAppointmentsForSelectedDate(DateTime selectedDate) {
     final events =
-        ref.watch(providerCalendarScreen).getEventsForDate(selectedDate);
+        ref.watch(providerCalendar).getEventsForDate(selectedDate);
     return events.map((event) {
       return Appointment(
         startTime: event.startTime,
@@ -447,7 +447,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
                       // Add the new event to the provider
                       ref
-                          .read(providerCalendarScreen)
+                          .read(providerCalendar)
                           .addEvent(_selectedDate, event);
 
                       Navigator.of(context).pop(); // Close dialog
