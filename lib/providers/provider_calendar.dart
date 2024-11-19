@@ -1,23 +1,46 @@
-import 'package:csc322_starter_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'provider_auth.dart';
-import '../util/services/calendar_service.dart';
-import '../models/google_event.dart';
+import 'package:flutter/material.dart';
 
-final calendarProvider = StateNotifierProvider<CalendarNotifier, List<GoogleEvent>>((ref) {
-  final authProvider = ref.watch(providerAuth);
-  return CalendarNotifier(CalendarService(), authProvider.googleAccessToken);
+class Event {
+  final String name;
+  final DateTime startTime;
+  final DateTime endTime;
+  final Color color;
+  final String notes;
+  final bool isAllDay;
+  final String repeat; // Recurrence pattern (e.g., "None", "Daily")
+  final DateTime? endRepeat; // Optional end date for recurrence
+
+  Event({
+    required this.name,
+    required this.startTime,
+    required this.endTime,
+    required this.color,
+    this.notes = '',
+    this.isAllDay = false,
+    this.repeat = 'None',
+    this.endRepeat,
+  });
+}
+
+final providerCalendarScreen = ChangeNotifierProvider<ProviderCalendarScreen>((ref) {
+  return ProviderCalendarScreen();
 });
 
-class CalendarNotifier extends StateNotifier<List<GoogleEvent>> {
-  final CalendarService _calendarService;
-  final String? _accessToken;
+class ProviderCalendarScreen extends ChangeNotifier {
+  final Map<DateTime, List<Event>> _events = {};
 
-  CalendarNotifier(this._calendarService, this._accessToken) : super([]);
+  List<Event> getEventsForDate(DateTime date) {
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    return _events[normalizedDate] ?? [];
+  }
 
-  Future<void> loadEvents() async {
-    if (_accessToken == null) return;
-    final events = await _calendarService.fetchCalendarEvents(_accessToken!);
-    state = events; // Update state with the list of events
+  void addEvent(DateTime date, Event event) {
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    if (!_events.containsKey(normalizedDate)) {
+      _events[normalizedDate] = [];
+    }
+    _events[normalizedDate]?.add(event);
+    notifyListeners();
   }
 }
