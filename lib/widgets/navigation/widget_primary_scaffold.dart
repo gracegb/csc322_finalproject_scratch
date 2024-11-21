@@ -147,8 +147,11 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   Widget _getAppBarTitle(int currentTabIndex) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
       return Text("Home");
+      else if (currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index)
+            return Text("Chats");
+
     else
-      return Text("Chats");
+      return Text("Calendar");
   }
 
   ////////////////////////////////////////////////////////////////
