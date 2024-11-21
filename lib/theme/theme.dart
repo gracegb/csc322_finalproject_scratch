@@ -158,12 +158,12 @@ InputDecorationTheme milLightInputDecorationTheme = InputDecorationTheme(
 ElevatedButtonThemeData milLightElevatedButtonTheme = ElevatedButtonThemeData(
   style: ButtonStyle(
     // padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(0)),
-    textStyle: MaterialStateProperty.all<TextStyle>(
+    textStyle: WidgetStateProperty.all<TextStyle>(
       const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
     ),
-    backgroundColor: MaterialStateProperty.all<Color>(CustomColors.statusInfo),
-    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+    backgroundColor: WidgetStateProperty.all<Color>(CustomColors.statusInfo),
+    foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
       RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
@@ -176,20 +176,20 @@ ElevatedButtonThemeData milLightElevatedButtonTheme = ElevatedButtonThemeData(
 //////////////////////////////////////////////////////////////////////////
 TextButtonThemeData milLightTextButtonTheme = TextButtonThemeData(
   style: ButtonStyle(
-    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(0)),
-    textStyle: MaterialStateProperty.all<TextStyle>(
+    padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(0)),
+    textStyle: WidgetStateProperty.all<TextStyle>(
       const TextStyle(fontWeight: FontWeight.bold),
     ),
-    foregroundColor: MaterialStateProperty.all<Color>(CustomColors.statusInfo),
+    foregroundColor: WidgetStateProperty.all<Color>(CustomColors.statusInfo),
   ),
 );
 TextButtonThemeData milDarkTextButtonTheme = TextButtonThemeData(
   style: ButtonStyle(
-    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(0)),
-    textStyle: MaterialStateProperty.all<TextStyle>(
+    padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(0)),
+    textStyle: WidgetStateProperty.all<TextStyle>(
       const TextStyle(fontWeight: FontWeight.bold),
     ),
-    foregroundColor: MaterialStateProperty.all<Color>(CustomColors.statusInfoDarkMode),
+    foregroundColor: WidgetStateProperty.all<Color>(CustomColors.statusInfoDarkMode),
   ),
 );
 

@@ -178,7 +178,11 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
         actionButtons: _getAppBarActions(currentTabIndex),
         title: _getAppBarTitle(currentTabIndex),
       ),
-      drawer: WidgetAppDrawer(),
+      // Adjusted this to ensure the widgetAppDrawer is not displayed when the currentTabIndex is on the ALTERNATE_SCREEN
+      drawer: currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index
+        ? null
+        : WidgetAppDrawer(),
+      // drawer: WidgetAppDrawer(),
       body: _getScreenToDisplay(currentTabIndex),
       bottomNavigationBar: Stack(
         alignment: Alignment.bottomCenter,

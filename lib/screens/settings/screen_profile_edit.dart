@@ -5,11 +5,6 @@
 // Copyright: (c) 2024 CSC322
 // Description: This file contains the primary scaffold for the app.
 
-//////////////////////////////////////////////////////////////////////////
-// Imports
-//////////////////////////////////////////////////////////////////////////
-// Flutter external package imports
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 

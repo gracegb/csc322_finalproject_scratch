@@ -20,8 +20,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import '../../util/message_display/snackbar.dart';
-import '../../theme/colors.dart';
 
 class WidgetPrimaryAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget {
   // Constant parameters passedin

@@ -10,14 +10,17 @@
 // Imports
 //////////////////////////////////////////////////////////////////////////
 // Dart imports
-
-// Flutter external package  imports
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
+import 'package:csc322_starter_app/screens/account/screen_files.dart';
+import 'package:csc322_starter_app/screens/account/screen_forms.dart';
+import 'package:csc322_starter_app/screens/account/screen_people.dart';
+import 'package:csc322_starter_app/screens/account/screen_sign_ups.dart';
+import 'package:csc322_starter_app/screens/account/screen_tasks.dart';
 import 'screens/general/screen_alternate.dart';
 import 'screens/general/screen_home.dart';
 import 'screens/general/screen_calendar.dart';
@@ -25,7 +28,6 @@ import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
 import 'screens/settings/screen_profile_edit.dart';
 import 'providers/provider_user_profile.dart';
-import 'screens/settings/screen_settings.dart';
 import 'providers/provider_auth.dart';
 import 'providers/provider_tts.dart';
 import 'util/file/util_file.dart';
@@ -97,8 +99,24 @@ class _MyAppState extends State<MyApp> {
         builder: (context, state) => const ScreenLoginValidation(),
       ),
       GoRoute(
-        path: ScreenSettings.routeName,
-        builder: (context, state) => ScreenSettings(),
+        path: ScreenPeople.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenPeople(),
+      ),
+      GoRoute(
+        path: ScreenFiles.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenFiles(),
+      ),
+      GoRoute(
+        path: ScreenForms.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenForms(),
+      ),
+      GoRoute(
+        path: ScreenSignUps.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenSignUps(),
+      ),
+      GoRoute(
+        path: ScreenTasks.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenTasks(),
       ),
       GoRoute(
         path: ScreenProfileEdit.routeName,
