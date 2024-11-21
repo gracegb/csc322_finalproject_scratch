@@ -26,7 +26,7 @@ import '../general/widget_profile_avatar.dart';
 import '../../providers/provider_auth.dart';
 import '../../main.dart';
 
-enum BottomNavSelection { HOME_SCREEN, ALTERNATE_SCREEN }
+enum BottomNavSelection { HOME_SCREEN, ALTERNATE_SCREEN, CALENDAR_SCREEN }
 
 //////////////////////////////////////////////////////////////////
 // StateLESS widget which only has data that is initialized when

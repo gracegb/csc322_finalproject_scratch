@@ -10,21 +10,20 @@
 // Imports
 //////////////////////////////////////////////////////////////////////////
 // Dart imports
-
-// Flutter external package imports
-import 'package:csc322_starter_app/screens/account/screen_files.dart';
-import 'package:csc322_starter_app/screens/account/screen_forms.dart';
-import 'package:csc322_starter_app/screens/account/screen_people.dart';
-import 'package:csc322_starter_app/screens/account/screen_sign_ups.dart';
-import 'package:csc322_starter_app/screens/account/screen_tasks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
+import 'package:csc322_starter_app/screens/account/screen_files.dart';
+import 'package:csc322_starter_app/screens/account/screen_forms.dart';
+import 'package:csc322_starter_app/screens/account/screen_people.dart';
+import 'package:csc322_starter_app/screens/account/screen_sign_ups.dart';
+import 'package:csc322_starter_app/screens/account/screen_tasks.dart';
 import 'screens/general/screen_alternate.dart';
 import 'screens/general/screen_home.dart';
+import 'screens/general/screen_calendar.dart';
 import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
 import 'screens/settings/screen_profile_edit.dart';
@@ -134,6 +133,10 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
         path: ScreenAlternate.routeName,
         builder: (BuildContext context, GoRouterState state) => ScreenAlternate(),
+      ),
+      GoRoute(
+        path: CalendarScreen.routeName,
+        builder: (BuildContext context, GoRouterState state) => CalendarScreen(),
       ),
     ],
   );

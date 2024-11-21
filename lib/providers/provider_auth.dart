@@ -16,6 +16,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 // App relative file imports
 import '../util/message_display/popup_dialogue.dart';
@@ -35,6 +36,28 @@ enum AuthState { UNKNOWN, AUTHENTICATED, UN_AUTHENTICATED }
 // ChangeNotifier so it can be accessed in multiple files.
 //////////////////////////////////////////////////////////////////
 class ProviderAuth extends ChangeNotifier {
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: [
+    'https://www.googleapis.com/auth/calendar.readonly',
+  ]);
+
+  String? _googleAccessToken;
+
+  Future<void> signInWithGoogle() async {
+    try {
+      final account = await _googleSignIn.signIn();
+      if (account != null) {
+        final auth = await account.authentication;
+        _googleAccessToken = auth.accessToken;
+        // Now _googleAccessToken can be used to fetch Google Calendar data
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Google Sign-In failed: $e");
+      // Handle error (e.g., show error message)
+    }
+  }
+
+  String? get googleAccessToken => _googleAccessToken;
   // The "instance variables" managed in provider
   late ProviderUserProfile _providerUserProfile;
   late StreamSubscription<User?>? _authStateSubscription;
@@ -72,7 +95,8 @@ class ProviderAuth extends ChangeNotifier {
     // the user is logged in or not
     _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen(
       (user) async {
-        _emailVerified = FirebaseAuth.instance.currentUser?.emailVerified ?? false;
+        _emailVerified =
+            FirebaseAuth.instance.currentUser?.emailVerified ?? false;
         // If no real change in state, return
         if (_authState == AuthState.AUTHENTICATED && user != null) {
           return;
@@ -83,9 +107,13 @@ class ProviderAuth extends ChangeNotifier {
         // If it's been less than 3 seconds since the splash screen started, wait
         // until 3 seconds have passed before showing the next screen
         int splashScreenDuration = 1500;
-        if (DateTime.now().millisecondsSinceEpoch - _splashStartTime < splashScreenDuration) {
+        if (DateTime.now().millisecondsSinceEpoch - _splashStartTime <
+            splashScreenDuration) {
           await Future.delayed(
-              Duration(milliseconds: splashScreenDuration - (DateTime.now().millisecondsSinceEpoch - _splashStartTime)),
+              Duration(
+                  milliseconds: splashScreenDuration -
+                      (DateTime.now().millisecondsSinceEpoch -
+                          _splashStartTime)),
               () {});
         }
 
@@ -120,7 +148,8 @@ class ProviderAuth extends ChangeNotifier {
   ///////////////////////////////////////////////////////////////////
   ensurePasswordUpToDate() async {
     // Get the current user's ID token
-    IdTokenResult idTokenResult = await FirebaseAuth.instance.currentUser!.getIdTokenResult();
+    IdTokenResult idTokenResult =
+        await FirebaseAuth.instance.currentUser!.getIdTokenResult();
     // DateTime? lastPwChangeTime = _userProfileProvider.dateLastPasswordChange;
     DateTime? lastAuthTime = idTokenResult.authTime;
 
@@ -171,13 +200,17 @@ class ProviderAuth extends ChangeNotifier {
             fae.code == "invalid-email" ||
             fae.code == "INVALID_LOGIN_CREDENTIALS" ||
             fae.code == "invalid-credential") {
-          errorMessage = "Email/Password is incorrect - please check your credentials and try again";
+          errorMessage =
+              "Email/Password is incorrect - please check your credentials and try again";
         } else if (fae.code == "too-many-requests") {
-          errorMessage = "Too many failed login attempts - please try again later";
+          errorMessage =
+              "Too many failed login attempts - please try again later";
         } else if (fae.code == "timeout") {
-          errorMessage = "Login attempt took too long - please check internet connection and try again";
+          errorMessage =
+              "Login attempt took too long - please check internet connection and try again";
         } else if (fae.code == "network-request-failed") {
-          errorMessage = "An network request error occurred - please check internet connection and try again";
+          errorMessage =
+              "An network request error occurred - please check internet connection and try again";
         } else {
           errorMessage =
               "An unknown error occurred during authentication - please check internet connection and try again";
@@ -199,7 +232,8 @@ class ProviderAuth extends ChangeNotifier {
   // updates the user's password with the new password; returns an empty
   // string if successful and an error message if not.
   ///////////////////////////////////////////////////////////////////
-  Future<String> updatePassword(String newPassword, {String? curPassword}) async {
+  Future<String> updatePassword(String newPassword,
+      {String? curPassword}) async {
     // Before trying anything with Firestore, do some basic validation
     String errorMessage = _validatePasssword(newPassword);
     if (errorMessage.isNotEmpty) {
@@ -216,17 +250,21 @@ class ProviderAuth extends ChangeNotifier {
       // before trying to change it
       if (curPassword != null) {
         user = FirebaseAuth.instance.currentUser!;
-        authCredential = EmailAuthProvider.credential(email: user.email!, password: curPassword);
-        UserCredential? authResult = await user.reauthenticateWithCredential(authCredential);
+        authCredential = EmailAuthProvider.credential(
+            email: user.email!, password: curPassword);
+        UserCredential? authResult =
+            await user.reauthenticateWithCredential(authCredential);
         user = authResult.user!;
       }
 
       // If we made it here, the user is authenticated and we can update the password
-      DateTime dateLastPasswordChange = DateTime.now().subtract(const Duration(seconds: 5));
+      DateTime dateLastPasswordChange =
+          DateTime.now().subtract(const Duration(seconds: 5));
       await user.updatePassword(newPassword);
 
       // Re-auth with the new password (not completely necessary)
-      authCredential = EmailAuthProvider.credential(email: user.email!, password: newPassword);
+      authCredential = EmailAuthProvider.credential(
+          email: user.email!, password: newPassword);
       await user.reauthenticateWithCredential(authCredential);
 
       // Password has been updated, we should now log the password change time in the user profile
@@ -243,7 +281,8 @@ class ProviderAuth extends ChangeNotifier {
         } else if (fae.code == "requires-recent-login") {
           errorMessage = "Please re-login to change your password";
         } else {
-          errorMessage = "An error occurred checking current password - please try again";
+          errorMessage =
+              "An error occurred checking current password - please try again";
         }
       }
     }
@@ -288,7 +327,8 @@ class ProviderAuth extends ChangeNotifier {
       }
 
       // Make sure the password contains a letter.
-      if (!(RegExp(r"(?=.*[a-z])").hasMatch(pwCandidate) || RegExp(r"(?=.*[A-Z])").hasMatch(pwCandidate))) {
+      if (!(RegExp(r"(?=.*[a-z])").hasMatch(pwCandidate) ||
+          RegExp(r"(?=.*[A-Z])").hasMatch(pwCandidate))) {
         if (invalidPassword) {
           passwordResponse += ", letter";
         } else {
@@ -335,7 +375,8 @@ class ProviderAuth extends ChangeNotifier {
           String endingPhrase = (errorCount > 2) ? ", and" : " and";
           passwordResponse = passwordResponse.substring(0, lastIndex) +
               endingPhrase +
-              passwordResponse.substring(lastIndex + 1, passwordResponse.length);
+              passwordResponse.substring(
+                  lastIndex + 1, passwordResponse.length);
         }
 
         return passwordResponse;
@@ -358,7 +399,8 @@ class ProviderAuth extends ChangeNotifier {
   Future<bool> reauthenticateUser(String password) async {
     try {
       User user = FirebaseAuth.instance.currentUser!;
-      AuthCredential authCredential = EmailAuthProvider.credential(email: user.email!, password: password);
+      AuthCredential authCredential =
+          EmailAuthProvider.credential(email: user.email!, password: password);
       await user.reauthenticateWithCredential(authCredential);
     } catch (e) {
       return false;
@@ -373,7 +415,8 @@ class ProviderAuth extends ChangeNotifier {
   // password with the new password; returns an empty string if
   // successful and an error message if not.
   ///////////////////////////////////////////////////////////////////
-  Future<String> updateEmail(String newEmail, BuildContext context, {String? curPassword}) async {
+  Future<String> updateEmail(String newEmail, BuildContext context,
+      {String? curPassword}) async {
     // Set message
     String errorMessage = "";
 
@@ -387,8 +430,10 @@ class ProviderAuth extends ChangeNotifier {
       // before trying to change it
       if (curPassword != null) {
         user = FirebaseAuth.instance.currentUser!;
-        authCredential = EmailAuthProvider.credential(email: user.email!, password: curPassword);
-        UserCredential? authResult = await user.reauthenticateWithCredential(authCredential);
+        authCredential = EmailAuthProvider.credential(
+            email: user.email!, password: curPassword);
+        UserCredential? authResult =
+            await user.reauthenticateWithCredential(authCredential);
         user = authResult.user!;
       }
 
@@ -396,7 +441,8 @@ class ProviderAuth extends ChangeNotifier {
       await user.verifyBeforeUpdateEmail(newEmail);
 
       // Inform user that they need to check their e-mail to confirm the change
-      Snackbar.show(SnackbarDisplayType.SB_INFO, "Check $newEmail to verify e-mail", context);
+      Snackbar.show(SnackbarDisplayType.SB_INFO,
+          "Check $newEmail to verify e-mail", context);
       clearAuthedUserDetailsAndSignout();
 
       // DO NOT DO B/C of E-MAIL VALIDATION: Email has been updated, we should now write to DB
@@ -409,14 +455,18 @@ class ProviderAuth extends ChangeNotifier {
         FirebaseAuthException fae = e;
         if (fae.code == "wrong-password") {
           errorMessage = "Current password is incorrect";
-        } else if (fae.code == "invalid-email" || (fae.message?.contains("INVALID_NEW_EMAIL") ?? false)) {
+        } else if (fae.code == "invalid-email" ||
+            (fae.message?.contains("INVALID_NEW_EMAIL") ?? false)) {
           errorMessage = "$newEmail is not a valid e-mail address";
         } else if (fae.code == "email-already-in-use") {
-          errorMessage = fae.message?.toString() ?? "$newEmail is already in use by another user";
+          errorMessage = fae.message?.toString() ??
+              "$newEmail is already in use by another user";
         } else if (fae.code == "email-already-in-use") {
-          errorMessage = fae.message?.toString() ?? "$newEmail is already in use by another user";
+          errorMessage = fae.message?.toString() ??
+              "$newEmail is already in use by another user";
         } else {
-          errorMessage = "An error occurred updating account - please try again";
+          errorMessage =
+              "An error occurred updating account - please try again";
           AppLogger.error(e.toString());
           AppLogger.error("fae.code = ${fae.code}");
         }
@@ -495,7 +545,8 @@ class ProviderAuth extends ChangeNotifier {
   // Statics/Getters/Setters
   //////////////////////////////////////////////////////////////
   AuthState get authState => _authState;
-  bool get justLoggedIn => _authStateJustChanged && _authState == AuthState.AUTHENTICATED;
+  bool get justLoggedIn =>
+      _authStateJustChanged && _authState == AuthState.AUTHENTICATED;
 
   bool get emailVerified => _emailVerified;
   set emailVerified(bool value) {
