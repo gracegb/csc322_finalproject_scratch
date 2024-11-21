@@ -1,73 +1,135 @@
-// -----------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 // Filename: screen_alternative.dart
 // Original Author: Dan Grissom
-// Creation Date: 10/31/2024
+// Modified By: Grace Bergquist
+// Modification Date: 11/20/2024
 // Copyright: (c) 2024 CSC322
-// Description: This file contains the screen for a dummy alternative screen
-//               history screen.
-
+// Description: This file contains the messaging screen with a
+//              layout including pinned and recent chats.
 //////////////////////////////////////////////////////////////////////////
+
 // Imports
-//////////////////////////////////////////////////////////////////////////
-
-// Flutter imports
-import 'dart:async';
-
-// Flutter external package imports
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// App relative file imports
-import '../../util/message_display/snackbar.dart';
-
-//////////////////////////////////////////////////////////////////////////
-// StateFUL widget which manages state. Simply initializes the state object.
-//////////////////////////////////////////////////////////////////////////
 class ScreenAlternate extends ConsumerStatefulWidget {
-  static const routeName = '/alternative';
+  static const routeName = '/messaging';
 
   @override
   ConsumerState<ScreenAlternate> createState() => _ScreenAlternateState();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// The actual STATE which is managed by the above widget.
-//////////////////////////////////////////////////////////////////////////
 class _ScreenAlternateState extends ConsumerState<ScreenAlternate> {
-  // The "instance variables" managed in this state
-  bool _isInit = true;
-
-  ////////////////////////////////////////////////////////////////
-  // Runs the following code once upon initialization
-  ////////////////////////////////////////////////////////////////
-  @override
-  void didChangeDependencies() {
-    // If first time running this code, update provider settings
-    if (_isInit) {
-      _init();
-      _isInit = false;
-      super.didChangeDependencies();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  ////////////////////////////////////////////////////////////////
-  // Initializes state variables and resources
-  ////////////////////////////////////////////////////////////////
-  Future<void> _init() async {}
-
-  //////////////////////////////////////////////////////////////////////////
-  // Primary Flutter method overridden which describes the layout and bindings for this widget.
-  //////////////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
-    // Return the scaffold
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(
+          'Chats',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Text(
+                'Pinned',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(5, (index) {
+                  return CircleAvatar(
+                    backgroundColor: Color(0xFFE1E1E1),
+                    radius: 28.5,
+                  );
+                }),
+              ),
+              const SizedBox(height: 30),
+              Text(
+                'Recents',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ..._buildRecentChats(),
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  List<Widget> _buildRecentChats() {
+    final List<Map<String, String>> recentChats = [
+      {'name': 'John Smith', 'message': 'Thanks for the heads up, I...'},
+      {'name': 'Team Group Chat', 'message': 'Team dinner @ 5 tomorrow...'},
+      {'name': 'Team Group Chat 2', 'message': 'Does anyone know the swim set...'},
+      {'name': 'Jane Doe', 'message': 'Hello?'},
+      {'name': 'Caitlin Clark', 'message': 'What’s up guys it’s Caitlin Clar...'},
+      {'name': 'Mike Jordan', 'message': 'What’s up guys it’s Michael Jor...'},
+    ];
+
+    return recentChats.map((chat) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 15.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Color(0xFFE1E1E1),
+              radius: 28.5,
+            ),
+            const SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  chat['name']!,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  chat['message']!,
+                  style: TextStyle(
+                    color: Color(0xFF9D9D9D),
+                    fontSize: 12,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      );
+    }).toList();
   }
 }

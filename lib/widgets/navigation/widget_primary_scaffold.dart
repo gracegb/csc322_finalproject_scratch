@@ -148,7 +148,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
       return Text("Home");
     else
-      return Text("Alternate");
+      return Text("Chats");
   }
 
   ////////////////////////////////////////////////////////////////
@@ -197,9 +197,9 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
                   icon: Icon(FontAwesomeIcons.house),
                 ),
                 BottomNavigationBarItem(
-                  label: "Alternate",
-                  activeIcon: Icon(FontAwesomeIcons.building),
-                  icon: Icon(FontAwesomeIcons.building),
+                  label: "Chats",
+                  activeIcon: Icon(FontAwesomeIcons.message),
+                  icon: Icon(FontAwesomeIcons.message),
                 ),
                 BottomNavigationBarItem(
                   label: "Calendar",
