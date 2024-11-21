@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // Filename: screen_alternative.dart
-// Original Author: Dan Grissom
+// Original Author: Dan Grissom]
 // Modified By: Grace Bergquist
 // Modification Date: 11/20/2024
 // Copyright: (c) 2024 CSC322
