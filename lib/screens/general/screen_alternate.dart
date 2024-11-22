@@ -7,8 +7,6 @@
 // Description: This file contains the messaging screen with a
 //              layout including pinned and recent chats.
 //////////////////////////////////////////////////////////////////////////
-
-// Imports
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -15,16 +15,13 @@ import 'dart:async';
 
 // Flutter external package imports
 import 'package:csc322_starter_app/widgets/home/widget_home_bigcalendar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import '../../util/message_display/snackbar.dart';
 import '../../widgets/home/widget_home_calendar.dart';
 import '../../widgets/home/widget_home_attention.dart';
 import '../../widgets/home/widget_home_chats.dart';
-import '../../widgets/home/widget_home_bigcalendar.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
