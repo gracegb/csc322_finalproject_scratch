@@ -147,8 +147,11 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   Widget _getAppBarTitle(int currentTabIndex) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
       return Text("Home");
+      else if (currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index)
+            return Text("Chats");
+
     else
-      return Text("Alternate");
+      return Text("Calendar");
   }
 
   ////////////////////////////////////////////////////////////////
@@ -201,9 +204,9 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
                   icon: Icon(FontAwesomeIcons.house),
                 ),
                 BottomNavigationBarItem(
-                  label: "Alternate",
-                  activeIcon: Icon(FontAwesomeIcons.building),
-                  icon: Icon(FontAwesomeIcons.building),
+                  label: "Chats",
+                  activeIcon: Icon(FontAwesomeIcons.message),
+                  icon: Icon(FontAwesomeIcons.message),
                 ),
                 BottomNavigationBarItem(
                   label: "Calendar",
