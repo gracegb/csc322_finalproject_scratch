@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/util/services/chat_service.dart';
+import 'package:csc322_starter_app/widgets/chat/widget_chat_bubble.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,9 @@ class ChatPage extends StatefulWidget {
               ),
 
               // user input
-              _buildMessageInput();
+              _buildMessageInput(),
+
+              const SizedBox(height: 25),
             ],
           ),
         );
@@ -96,7 +99,8 @@ class ChatPage extends StatefulWidget {
                 : MainAxisAlignment.start,
             children: [
               Text(data['senderEmail']),
-              Text(data['message']),
+              const SizedBox(height: 5),
+              ChatBubble(message: data['message']),
             ],
           ),
         )
@@ -105,27 +109,30 @@ class ChatPage extends StatefulWidget {
 
     // build msg input
     Widget _buildMessageInput() {
-      return Row(
-        children: [
-          // textfield
-          Expanded(
-            child: MyTextField(
-              controller: _messageController,
-              hintText: 'Enter message',
-              obscureText: false,
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        child: Row(
+          children: [
+            // textfield
+            Expanded(
+              child: MyTextField(
+                controller: _messageController,
+                hintText: 'Enter message',
+                obscureText: false,
+              ),
             ),
-          ),
-
-          // send button
-          IconButton(
-            onPressed: sendMessage,
-            icon: Icon(
-              Icons.arrow_upward,
-              size: 40,
-            ),
-          )
-        ],
-
+        
+            // send button
+            IconButton(
+              onPressed: sendMessage,
+              icon: Icon(
+                Icons.arrow_upward,
+                size: 40,
+              ),
+            )
+          ],
+        
+        ),
       );
     }
  }
