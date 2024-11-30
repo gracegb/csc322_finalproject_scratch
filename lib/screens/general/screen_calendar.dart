@@ -1,27 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:googleapis/calendar/v3.dart' as calendar;
-import 'package:http/http.dart' as http;
-import 'package:csc322_starter_app/models/event.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:http/http.dart' as http;
+import '../../providers/provider_google.dart';
+import '../../models/event.dart';
 
-class CalendarScreen extends StatefulWidget {
+class CalendarScreen extends ConsumerStatefulWidget {
   static const routeName = '/calendar';
 
   @override
   _CalendarScreenState createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [calendar.CalendarApi.calendarScope],
-  );
-
-  bool _isSignedIn = false;
-  String? _userName;
-  String? _userEmail;
-
+class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   Map<DateTime, List<Event>> _events = {};
@@ -38,14 +31,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _focusedDay.day,
     );
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
-
-    if (_googleSignIn.currentUser != null) {
-      _isSignedIn = true;
-      _userName = _googleSignIn.currentUser?.displayName;
-      _userEmail = _googleSignIn.currentUser?.email;
-      _fetchGoogleCalendarEvents();
-      _startPeriodicSync();
-    }
   }
 
   @override
@@ -55,51 +40,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
-  Future<void> _signInGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser != null) {
-        setState(() {
-          _isSignedIn = true;
-          _userName = googleUser.displayName;
-          _userEmail = googleUser.email;
-        });
-        await _fetchGoogleCalendarEvents();
-        _startPeriodicSync();
-      }
-    } catch (e) {
-      print("Error signing in: $e");
-      _showErrorSnackBar('Sign-in failed: $e');
-    }
-  }
-
-  Future<void> _signOutGoogle() async {
-    try {
-      await _googleSignIn.signOut();
-      setState(() {
-        _isSignedIn = false;
-        _userName = null;
-        _userEmail = null;
-        _events.clear();
-        _selectedEvents.value = [];
-      });
-      print("User signed out");
-      _syncTimer?.cancel();
-    } catch (e) {
-      print("Error signing out: $e");
-      _showErrorSnackBar('Sign-out failed: $e');
-    }
-  }
-
   Future<void> _fetchGoogleCalendarEvents() async {
-    final googleUser = _googleSignIn.currentUser;
-    if (googleUser == null) {
-      print("No user is signed in");
-      return;
-    }
+    final googleAuthState = ref.watch(googleSignInProvider);
+
+    if (!googleAuthState.isSignedIn) return;
 
     try {
-      final authHeaders = await googleUser.authHeaders;
+      final googleUser = googleAuthState.user;
+      final authHeaders = await googleUser!.authHeaders;
       final client = GoogleAuthClient(authHeaders);
       final calendarApi = calendar.CalendarApi(client);
 
@@ -133,11 +81,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
         }
         _selectedEvents.value = _getEventsForDay(_selectedDay!);
       });
-
-      // print("Fetched Events:");
-      // for (var entry in _events.entries) {
-      //   print("Date: ${entry.key}, Events: ${entry.value.map((e) => e.title).toList()}");
-      // }
     } catch (e) {
       _showErrorSnackBar('Failed to fetch events: $e');
     }
@@ -146,7 +89,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _startPeriodicSync() {
     _syncTimer?.cancel();
     _syncTimer = Timer.periodic(Duration(minutes: 5), (timer) {
-      if (_isSignedIn) {
+      final googleAuthState = ref.watch(googleSignInProvider);
+      if (googleAuthState.isSignedIn) {
         _fetchGoogleCalendarEvents();
       } else {
         timer.cancel();
@@ -157,7 +101,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   List<Event> _getEventsForDay(DateTime day) {
     final normalizedDay = DateTime(day.year, day.month, day.day);
     final eventsForDay = _events[normalizedDay] ?? [];
-    // print("Events for $normalizedDay: ${eventsForDay.map((e) => e.title).toList()}");
     return eventsForDay;
   }
 
@@ -185,37 +128,40 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final googleAuthState = ref.watch(googleSignInProvider);
+    final googleAuthNotifier = ref.read(googleSignInProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Google Calendar Integration'),
         actions: [
-          if (_isSignedIn)
+          if (googleAuthState.isSignedIn)
             IconButton(
               icon: Icon(Icons.refresh),
               onPressed: _fetchGoogleCalendarEvents,
               tooltip: "Refresh Events",
             ),
-          if (_isSignedIn)
+          if (googleAuthState.isSignedIn)
             IconButton(
               icon: Icon(Icons.logout),
-              onPressed: _signOutGoogle,
+              onPressed: googleAuthNotifier.signOut,
               tooltip: "Sign Out",
             )
           else
             IconButton(
               icon: Icon(Icons.login),
-              onPressed: _signInGoogle,
+              onPressed: googleAuthNotifier.signIn,
               tooltip: "Sign In",
             ),
         ],
       ),
       body: Column(
         children: [
-          if (_isSignedIn)
+          if (googleAuthState.isSignedIn)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Welcome, $_userName ($_userEmail)",
+                "Welcome, ${googleAuthState.user?.displayName} (${googleAuthState.user?.email})",
                 style: TextStyle(fontSize: 16),
               ),
             ),
