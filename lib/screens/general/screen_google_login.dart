@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/calendar/v3.dart' as calendar;
-import 'package:http/http.dart' as http;
-import 'package:googleapis_auth/auth_io.dart';
 
 class GoogleCalendarLoginScreen extends StatefulWidget {
   @override
-  _GoogleCalendarLoginScreenState createState() => _GoogleCalendarLoginScreenState();
+  _GoogleCalendarLoginScreenState createState() =>
+      _GoogleCalendarLoginScreenState();
 }
 
-class _GoogleCalendarLoginScreenState extends State<GoogleCalendarLoginScreen> {
+class _GoogleCalendarLoginScreenState
+    extends State<GoogleCalendarLoginScreen> {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [calendar.CalendarApi.calendarScope],
   );
@@ -25,7 +25,12 @@ class _GoogleCalendarLoginScreenState extends State<GoogleCalendarLoginScreen> {
     });
 
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser =
+          await _googleSignIn.signIn().timeout(Duration(seconds: 15),
+              onTimeout: () {
+        throw Exception('Sign-in process timed out. Please try again.');
+      });
+
       if (googleUser != null) {
         setState(() {
           _isSignedIn = true;
@@ -34,6 +39,8 @@ class _GoogleCalendarLoginScreenState extends State<GoogleCalendarLoginScreen> {
         });
       }
     } catch (e) {
+      // Show an error dialog
+      _showErrorDialog('Error during Google Sign-In', e.toString());
       print("Error during Google Sign-In: $e");
     } finally {
       setState(() {
@@ -51,6 +58,22 @@ class _GoogleCalendarLoginScreenState extends State<GoogleCalendarLoginScreen> {
     });
   }
 
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +89,10 @@ class _GoogleCalendarLoginScreenState extends State<GoogleCalendarLoginScreen> {
                   children: [
                     Text(
                       "Welcome, $_userName",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 8),
                     Text("Email: $_userEmail"),
@@ -82,7 +108,10 @@ class _GoogleCalendarLoginScreenState extends State<GoogleCalendarLoginScreen> {
                   children: [
                     Text(
                       "Sign in to Google Calendar",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 24),
                     ElevatedButton(

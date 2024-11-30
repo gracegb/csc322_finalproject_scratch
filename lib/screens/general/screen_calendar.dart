@@ -1,14 +1,14 @@
-import 'dart:ffi';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:http/http.dart' as http;
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:csc322_starter_app/models/event.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
   static const routeName = '/calendar';
+
   @override
   _CalendarScreenState createState() => _CalendarScreenState();
 }
@@ -27,16 +27,31 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Map<DateTime, List<Event>> _events = {};
   late final ValueNotifier<List<Event>> _selectedEvents;
 
+  Timer? _syncTimer;
+
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
+    _selectedDay = DateTime(
+      _focusedDay.year,
+      _focusedDay.month,
+      _focusedDay.day,
+    );
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+
+    if (_googleSignIn.currentUser != null) {
+      _isSignedIn = true;
+      _userName = _googleSignIn.currentUser?.displayName;
+      _userEmail = _googleSignIn.currentUser?.email;
+      _fetchGoogleCalendarEvents();
+      _startPeriodicSync();
+    }
   }
 
   @override
   void dispose() {
     _selectedEvents.dispose();
+    _syncTimer?.cancel();
     super.dispose();
   }
 
@@ -50,9 +65,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
           _userEmail = googleUser.email;
         });
         await _fetchGoogleCalendarEvents();
+        _startPeriodicSync();
       }
     } catch (e) {
       print("Error signing in: $e");
+      _showErrorSnackBar('Sign-in failed: $e');
     }
   }
 
@@ -67,24 +84,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
         _selectedEvents.value = [];
       });
       print("User signed out");
+      _syncTimer?.cancel();
     } catch (e) {
       print("Error signing out: $e");
-    }
-  }
-
-  Future<void> _disconnectGoogle() async {
-    try {
-      await _googleSignIn.disconnect();
-      setState(() {
-        _isSignedIn = false;
-        _userName = null;
-        _userEmail = null;
-        _events.clear();
-        _selectedEvents.value = [];
-      });
-      print("User disconnected");
-    } catch (e) {
-      print("Error disconnecting: $e");
+      _showErrorSnackBar('Sign-out failed: $e');
     }
   }
 
@@ -100,10 +103,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
       final client = GoogleAuthClient(authHeaders);
       final calendarApi = calendar.CalendarApi(client);
 
-      final eventsResponse = await calendarApi.events.list("primary");
+      final eventsResponse = await calendarApi.events.list(
+        "primary",
+        maxResults: 250,
+        singleEvents: true,
+        orderBy: 'startTime',
+        timeMin: DateTime.now().toUtc(),
+      );
+
       final List<calendar.Event> googleEvents = eventsResponse.items ?? [];
 
       setState(() {
+        _events.clear();
         for (var event in googleEvents) {
           final DateTime? eventDateTime =
               event.start?.dateTime ?? event.start?.date;
@@ -122,21 +133,54 @@ class _CalendarScreenState extends State<CalendarScreen> {
         }
         _selectedEvents.value = _getEventsForDay(_selectedDay!);
       });
+
+      // print("Fetched Events:");
+      // for (var entry in _events.entries) {
+      //   print("Date: ${entry.key}, Events: ${entry.value.map((e) => e.title).toList()}");
+      // }
     } catch (e) {
-      print("Error fetching Google Calendar events: $e");
+      _showErrorSnackBar('Failed to fetch events: $e');
     }
   }
 
+  void _startPeriodicSync() {
+    _syncTimer?.cancel();
+    _syncTimer = Timer.periodic(Duration(minutes: 5), (timer) {
+      if (_isSignedIn) {
+        _fetchGoogleCalendarEvents();
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
   List<Event> _getEventsForDay(DateTime day) {
-    return _events[day] ?? [];
+    final normalizedDay = DateTime(day.year, day.month, day.day);
+    final eventsForDay = _events[normalizedDay] ?? [];
+    // print("Events for $normalizedDay: ${eventsForDay.map((e) => e.title).toList()}");
+    return eventsForDay;
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
-      _selectedEvents.value = _getEventsForDay(selectedDay);
+      _selectedDay = DateTime(
+        selectedDay.year,
+        selectedDay.month,
+        selectedDay.day,
+      );
+      _focusedDay = DateTime(
+        focusedDay.year,
+        focusedDay.month,
+        focusedDay.day,
+      );
+      _selectedEvents.value = _getEventsForDay(_selectedDay!);
     });
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -145,6 +189,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
       appBar: AppBar(
         title: Text('Google Calendar Integration'),
         actions: [
+          if (_isSignedIn)
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: _fetchGoogleCalendarEvents,
+              tooltip: "Refresh Events",
+            ),
           if (_isSignedIn)
             IconButton(
               icon: Icon(Icons.logout),
@@ -156,12 +206,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
               icon: Icon(Icons.login),
               onPressed: _signInGoogle,
               tooltip: "Sign In",
-            ),
-          if (_isSignedIn)
-            IconButton(
-              icon: Icon(Icons.switch_account),
-              onPressed: _disconnectGoogle,
-              tooltip: "Switch Account",
             ),
         ],
       ),
