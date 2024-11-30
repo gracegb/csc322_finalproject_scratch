@@ -1,24 +1,11 @@
 import 'package:flutter/material.dart';
-
-class Event {
-  final String time;
-  final String label;
-  final String location;
-  final Color color;
-
-  Event({
-    required this.time,
-    required this.label,
-    required this.location,
-    required this.color,
-  });
-}
+import 'package:csc322_starter_app/screens/general/screen_home.dart';
 
 class CustomEventCard extends StatelessWidget {
   final String date;
   final String month;
   final String day;
-  final List<Event> events;
+  final List<HomeEvent> events;
 
   const CustomEventCard({
     Key? key,
@@ -41,7 +28,6 @@ class CustomEventCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Date display at the top
           Positioned(
             left: 98,
             top: 8,
@@ -50,7 +36,6 @@ class CustomEventCard extends StatelessWidget {
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 64,
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -63,7 +48,6 @@ class CustomEventCard extends StatelessWidget {
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 32,
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -76,44 +60,37 @@ class CustomEventCard extends StatelessWidget {
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 16,
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w300,
               ),
             ),
           ),
-          // Loop through each event and display it with dynamic positioning
           ...List.generate(events.length, (index) {
             final event = events[index];
-            final topPosition = 85 + index * 47.0; // Dynamically position each event
+            final topPosition = 85 + index * 47.0;
 
             return Positioned(
               left: 22,
               top: topPosition,
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Time display
                   Text(
                     event.time,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 12,
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                   SizedBox(width: 10),
-                  // Vertical color indicator for event
                   Container(
                     width: 3,
-                    height: 30, // Height of the vertical line
+                    height: 30,
                     decoration: BoxDecoration(
                       color: event.color,
                       borderRadius: BorderRadius.circular(1.5),
                     ),
                   ),
                   SizedBox(width: 10),
-                  // Event label and location with icon in a Column
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -122,7 +99,6 @@ class CustomEventCard extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,
-                          fontFamily: 'Inter',
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -139,7 +115,6 @@ class CustomEventCard extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 8,
-                              fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
                             ),
                           ),
