@@ -92,6 +92,15 @@ class WidgetAppDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
+                leading: Icon(Icons.checklist),
+                title: Text('Sign-Ups'),
+                onTap: () {
+                  // Close the drawer
+                  Navigator.of(context).pop();
+                  context.push(ScreenSignUps.routeName, extra: false);
+                },
+              ),
+              ListTile(
                 leading: Icon(Icons.assignment),
                 title: Text('Forms'),
                 onTap: () {
@@ -101,16 +110,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.app_registration),
-                title: Text('Sign-Ups'),
-                onTap: () {
-                  // Close the drawer
-                  Navigator.of(context).pop();
-                  context.push(ScreenSignUps.routeName, extra: false);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.checklist),
+                leading: Icon(Icons.calendar_today),
                 title: Text('Tasks'),
                 onTap: () {
                   // Close the drawer
