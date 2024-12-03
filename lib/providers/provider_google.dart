@@ -1,3 +1,5 @@
+import 'package:csc322_starter_app/models/event.dart';
+import 'package:csc322_starter_app/screens/general/screen_calendar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/calendar/v3.dart' as calendar;
@@ -52,4 +54,37 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
   }
 
   GoogleSignIn get googleSignInInstance => _googleSignIn;
+}
+
+Future<List<Event>> fetchEventsForDay(
+  DateTime date,
+  GoogleSignInAccount? user,
+) async {
+  if (user == null) return [];
+
+  final authHeaders = await user.authHeaders;
+  final client = GoogleAuthClient(authHeaders);
+  final calendarApi = calendar.CalendarApi(client);
+
+  final startOfDay = DateTime(date.year, date.month, date.day);
+  final endOfDay = startOfDay.add(Duration(days: 1));
+
+  final events = await calendarApi.events.list(
+    "primary",
+    timeMin: startOfDay.toUtc(),
+    timeMax: endOfDay.toUtc(),
+    singleEvents: true,
+    orderBy: 'startTime',
+  );
+
+  return events.items?.map((event) {
+    return Event(
+      event.summary ?? "No Title",
+      location: event.location,
+      startTime: event.start?.dateTime,
+      duration: event.end?.dateTime != null && event.start?.dateTime != null
+          ? event.end!.dateTime!.difference(event.start!.dateTime!)
+          : null,
+    );
+  }).toList() ?? [];
 }

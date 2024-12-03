@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:csc322_starter_app/providers/provider_google.dart';
 import 'package:csc322_starter_app/widgets/home/widget_home_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,29 +47,23 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
   }
 
   Future<void> _fetchEventsForSelectedDay() async {
-    // Simulate fetching events for the selected day.
+    final googleAuth = ref.read(googleSignInProvider);
+    if (!googleAuth.isSignedIn) return;
+
     final currentDay = _selectedDay ?? DateTime.now();
+    final events = await fetchEventsForDay(currentDay, googleAuth.user);
+
     setState(() {
-      _events[currentDay] = [
-        HomeEvent(
-          time: '10:00 - 11:00 AM',
-          label: 'Team Standup',
-          location: 'Zoom',
-          color: Color(0xFFB3E5FC),
-        ),
-        HomeEvent(
-          time: '2:00 - 3:00 PM',
-          label: 'Project Review',
-          location: 'Conference Room A',
-          color: Color(0xFFA8F578),
-        ),
-        HomeEvent(
-          time: '4:30 - 5:00 PM',
-          label: '1:1 with Manager',
-          location: 'Office 101',
-          color: Color(0xFFEF9A9A),
-        ),
-      ];
+      _events[currentDay] = events.map((event) {
+        return HomeEvent(
+          time: event.startTime != null
+              ? "${event.startTime!.hour}:${event.startTime!.minute.toString().padLeft(2, '0')}"
+              : "Unknown Time",
+          label: event.title,
+          location: event.location ?? "No Location",
+          color: Color(0xFFB3E5FC), // Assign a default color
+        );
+      }).toList();
     });
   }
 
@@ -154,4 +149,3 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
     );
   }
 }
-
