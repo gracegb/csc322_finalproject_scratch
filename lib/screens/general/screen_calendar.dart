@@ -65,9 +65,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         _events.clear();
         for (var event in googleEvents) {
           final DateTime? startDateTime =
-              event.start?.dateTime ?? event.start?.date;
+              event.start?.dateTime?.toLocal() ?? event.start?.date?.toLocal();
           final DateTime? endDateTime =
-              event.end?.dateTime ?? event.end?.date;
+              event.end?.dateTime?.toLocal() ?? event.end?.date?.toLocal();
 
           if (startDateTime != null) {
             final eventDate = DateTime(
@@ -217,8 +217,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   itemCount: value.length,
                   itemBuilder: (context, index) {
                     return Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         border: Border.all(),
                         borderRadius: BorderRadius.circular(12),
