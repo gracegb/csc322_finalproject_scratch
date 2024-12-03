@@ -74,7 +74,9 @@ Future<void> main() async {
 
   // Run the app
   runApp(UncontrolledProviderScope(
-      container: providerContainer, child: MyApp()));
+    container: providerContainer,
+    child: const MyApp(),
+  ));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,7 +93,6 @@ class MyApp extends StatefulWidget {
 // The actual STATE which is managed by the above widget.
 //////////////////////////////////////////////////////////////////////////
 class _MyAppState extends State<MyApp> {
-  // Define the router
   late final GoRouter _router;
 
   @override
@@ -142,8 +143,7 @@ class _MyAppState extends State<MyApp> {
         ),
         GoRoute(
           path: ScreenHome.routeName,
-          builder: (BuildContext context, GoRouterState state) =>
-              ScreenHome(),
+          builder: (BuildContext context, GoRouterState state) => ScreenHome(),
         ),
         GoRoute(
           path: ScreenAlternate.routeName,
@@ -165,7 +165,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   //////////////////////////////////////////////////////////////////////////
-  // Primary Flutter method overriden which describes the layout
+  // Primary Flutter method overridden which describes the layout
   // and bindings for this widget.
   //////////////////////////////////////////////////////////////////////////
   @override
