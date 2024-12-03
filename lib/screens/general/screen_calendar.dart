@@ -64,18 +64,30 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       setState(() {
         _events.clear();
         for (var event in googleEvents) {
-          final DateTime? eventDateTime =
+          final DateTime? startDateTime =
               event.start?.dateTime ?? event.start?.date;
-          if (eventDateTime != null) {
+          final DateTime? endDateTime =
+              event.end?.dateTime ?? event.end?.date;
+
+          if (startDateTime != null) {
             final eventDate = DateTime(
-              eventDateTime.year,
-              eventDateTime.month,
-              eventDateTime.day,
+              startDateTime.year,
+              startDateTime.month,
+              startDateTime.day,
             );
+
+            final duration = (startDateTime != null && endDateTime != null)
+                ? endDateTime.difference(startDateTime)
+                : null;
 
             _events[eventDate] = [
               ...?_events[eventDate],
-              Event(event.summary ?? "Unnamed Event"),
+              Event(
+                event.summary ?? "Unnamed Event",
+                location: event.location,
+                startTime: startDateTime,
+                duration: duration,
+              ),
             ];
           }
         }
@@ -133,7 +145,17 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Google Calendar Integration'),
+        title: googleAuthState.isSignedIn
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Welcome, ${googleAuthState.user?.displayName ?? ''}",
+                      style: TextStyle(fontSize: 16)),
+                  Text("${googleAuthState.user?.email ?? ''}",
+                      style: TextStyle(fontSize: 12)),
+                ],
+              )
+            : Text("Google Calendar Integration"),
         actions: [
           if (googleAuthState.isSignedIn)
             IconButton(
@@ -157,14 +179,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       ),
       body: Column(
         children: [
-          if (googleAuthState.isSignedIn)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Welcome, ${googleAuthState.user?.displayName} (${googleAuthState.user?.email})",
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
           TableCalendar(
             firstDay: DateTime(2020),
             lastDay: DateTime(2030),
@@ -203,13 +217,31 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   itemCount: value.length,
                   itemBuilder: (context, index) {
                     return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         border: Border.all(),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
                         title: Text(value[index].title),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (value[index].startTime != null)
+                              Text(
+                                "Time: ${value[index].startTime?.toLocal()}",
+                              ),
+                            if (value[index].duration != null)
+                              Text(
+                                "Duration: ${value[index].duration?.inMinutes} minutes",
+                              ),
+                            if (value[index].location != null)
+                              Text(
+                                "Location: ${value[index].location}",
+                              ),
+                          ],
+                        ),
                       ),
                     );
                   },
