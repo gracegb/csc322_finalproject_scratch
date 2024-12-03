@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:csc322_starter_app/screens/general/screen_home.dart';
+import 'package:intl/intl.dart';
 
 class CustomEventCard extends StatelessWidget {
   final String date;
@@ -80,6 +81,10 @@ class CustomEventCard extends StatelessWidget {
                 itemCount: events.length,
                 itemBuilder: (context, index) {
                   final event = events[index];
+                  final localTime =
+                      event.time.toLocal(); // Convert to local time
+                  final formattedTime =
+                      DateFormat('h:mm a').format(localTime); // Format time
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Row(
@@ -87,7 +92,7 @@ class CustomEventCard extends StatelessWidget {
                       children: [
                         // Event Time
                         Text(
-                          event.time,
+                          formattedTime, // Use formatted local time
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 10,
