@@ -1,31 +1,25 @@
-// -----------------------------------------------------------------------
-// Filename: screen_home.dart
-// Original Author: Dan Grissom
-// Creation Date: 10/31/2024
-// Copyright: (c) 2024 CSC322
-// Description: This file contains the screen for a dummy home screen
-//               history screen.
-
-//////////////////////////////////////////////////////////////////////////
-// Imports
-//////////////////////////////////////////////////////////////////////////
-
-// Flutter imports
 import 'dart:async';
-
-// Flutter external package imports
-import 'package:csc322_starter_app/widgets/home/widget_home_bigcalendar.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:csc322_starter_app/widgets/home/widget_home_calendar.dart';
 import 'package:flutter/material.dart';
-
-// App relative file imports
-import '../../widgets/home/widget_home_calendar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../widgets/home/widget_home_attention.dart';
 import '../../widgets/home/widget_home_chats.dart';
 
-//////////////////////////////////////////////////////////////////////////
-// StateFUL widget which manages state. Simply initializes the state object.
-//////////////////////////////////////////////////////////////////////////
+// Define HomeEvent class
+class HomeEvent {
+  final String time;
+  final String label;
+  final String location;
+  final Color color;
+
+  HomeEvent({
+    required this.time,
+    required this.label,
+    required this.location,
+    required this.color,
+  });
+}
+
 class ScreenHome extends ConsumerStatefulWidget {
   static const routeName = '/home';
 
@@ -33,53 +27,96 @@ class ScreenHome extends ConsumerStatefulWidget {
   ConsumerState<ScreenHome> createState() => _ScreenHomeState();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// The actual STATE which is managed by the above widget.
-//////////////////////////////////////////////////////////////////////////
 class _ScreenHomeState extends ConsumerState<ScreenHome> {
-  // The "instance variables" managed in this state
+  // Instance variables managed in this state
   bool _isInit = true;
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+  Map<DateTime, List<HomeEvent>> _events = {};
 
-  ////////////////////////////////////////////////////////////////
-  // Runs the following code once upon initialization
-  ////////////////////////////////////////////////////////////////
   @override
   void didChangeDependencies() {
-    // If first time running this code, update provider settings
+    // If first time running this code, initialize the state
     if (_isInit) {
-      _init();
+      _selectedDay = DateTime.now();
+      _fetchEventsForSelectedDay();
       _isInit = false;
       super.didChangeDependencies();
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _fetchEventsForSelectedDay() async {
+    // Simulate fetching events for the selected day.
+    final currentDay = _selectedDay ?? DateTime.now();
+    setState(() {
+      _events[currentDay] = [
+        HomeEvent(
+          time: '10:00 - 11:00 AM',
+          label: 'Team Standup',
+          location: 'Zoom',
+          color: Color(0xFFB3E5FC),
+        ),
+        HomeEvent(
+          time: '2:00 - 3:00 PM',
+          label: 'Project Review',
+          location: 'Conference Room A',
+          color: Color(0xFFA8F578),
+        ),
+        HomeEvent(
+          time: '4:30 - 5:00 PM',
+          label: '1:1 with Manager',
+          location: 'Office 101',
+          color: Color(0xFFEF9A9A),
+        ),
+      ];
+    });
   }
 
-  ////////////////////////////////////////////////////////////////
-  // Initializes state variables and resources
-  ////////////////////////////////////////////////////////////////
-  Future<void> _init() async {}
+  String _getMonth(int monthIndex) {
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC'
+    ];
+    return months[monthIndex - 1];
+  }
 
-  //////////////////////////////////////////////////////////////////////////
-  // Primary Flutter method overridden which describes the layout and bindings for this widget.
-  //////////////////////////////////////////////////////////////////////////
+  String _getDayOfWeek(DateTime date) {
+    const daysOfWeek = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday'
+    ];
+    return daysOfWeek[date.weekday];
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;
+      _fetchEventsForSelectedDay(); // Fetch events for the new selected day
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final selectedDay = _selectedDay ?? DateTime.now();
+    final eventsForDay = _events[selectedDay] ?? [];
+
     return Scaffold(
-      // Floating plus button on the bottom right or home screen corner removed cause it was ugly
-      // floatingActionButton: FloatingActionButton(
-      //   shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
-      //   onPressed: () => Snackbar.show(
-      //     SnackbarDisplayType.SB_INFO,
-      //     'You clicked the floating button on the home screen!',
-      //     context,
-      //   ),
-      //   splashColor: Theme.of(context).primaryColor,
-      //   child: Icon(FontAwesomeIcons.plus),
-      // ),
       body: SingleChildScrollView(
         child: Padding(
           padding:
@@ -87,41 +124,29 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // CustomEventCard and CustomAttentionCard in a Row
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomEventCard(
-                    date: '29',
-                    month: 'OCT',
-                    day: 'Tuesday',
-                    events: [
-                      Event(
-                        time: '2:00 - \n3:00 PM',
-                        label: 'STA310-A',
-                        color: Color(0xFFA8F578),
-                        location: 'LOC',
-                      ),
-                      Event(
-                        time: '2:00 - \n3:00 PM',
-                        label: 'Practice',
-                        color: Color(0xFF79CCF5),
-                        location: 'LOC',
-                      ),
-                      Event(
-                        time: '2:00 - \n3:00 PM',
-                        label: 'Weights',
-                        color: Color(0xFFF5799C),
-                        location: 'LOC',
-                      ),
-                    ],
+                  Expanded(
+                    flex: 2,
+                    child: CustomEventCard(
+                      date: '${selectedDay.day}',
+                      month: _getMonth(selectedDay.month),
+                      day: _getDayOfWeek(selectedDay),
+                      events: eventsForDay,
+                    ),
                   ),
-                  CustomAttentionCard(),
+                  SizedBox(width: 16), // Add spacing between the two cards
+                  Expanded(
+                    flex: 1,
+                    child: CustomAttentionCard(),
+                  ),
                 ],
               ),
               SizedBox(height: 16),
+              // Team chat card
               TeamChatCard(),
-              SizedBox(height: 16),
-              CalendarOverview(),
             ],
           ),
         ),
@@ -129,3 +154,4 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
     );
   }
 }
+

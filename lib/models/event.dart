@@ -2,8 +2,9 @@ import 'dart:ui';
 
 class Event {
   final String title;
-  Event(this.title);
+  final String? location;
+  final DateTime? startTime;
+  final Duration? duration;
 
-  @override
-  String toString() => title;
+  Event(this.title, {this.location, this.startTime, this.duration});
 }
