@@ -9,7 +9,6 @@
 //////////////////////////////////////////////////////////////////////////
 // Imports
 //////////////////////////////////////////////////////////////////////////
-// Dart imports
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
@@ -54,7 +53,7 @@ final providerTts = ChangeNotifierProvider<ProviderTts>((ref) {
 // MAIN entry point to start app.
 //////////////////////////////////////////////////////////////////////////
 Future<void> main() async {
-  // Initialize widgets and firebase
+  // Initialize widgets and Firebase
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase with the default options
@@ -74,8 +73,10 @@ Future<void> main() async {
   authProvider.initProviders(userProfileProvider);
 
   // Run the app
-  runApp(
-      UncontrolledProviderScope(container: providerContainer, child: MyApp()));
+  runApp(UncontrolledProviderScope(
+    container: providerContainer,
+    child: const MyApp(),
+  ));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -92,70 +93,79 @@ class MyApp extends StatefulWidget {
 // The actual STATE which is managed by the above widget.
 //////////////////////////////////////////////////////////////////////////
 class _MyAppState extends State<MyApp> {
-  // The "instance variables" managed in this state
-  // NONE
+  late final GoRouter _router;
 
-  // Router
-  final GoRouter _router = GoRouter(
-    initialLocation: ScreenLoginValidation.routeName,
-    routes: [
-      GoRoute(
-        path: ScreenLoginValidation.routeName,
-        builder: (context, state) => const ScreenLoginValidation(),
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize GoRouter
+    _router = GoRouter(
+      initialLocation: ScreenLoginValidation.routeName,
+      routes: [
+        GoRoute(
+          path: ScreenLoginValidation.routeName,
+          builder: (context, state) => const ScreenLoginValidation(),
+        ),
+        GoRoute(
+          path: ScreenPeople.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenPeople(),
+        ),
+        GoRoute(
+          path: ScreenFiles.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenFiles(),
+        ),
+        GoRoute(
+          path: ScreenForms.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenForms(),
+        ),
+        GoRoute(
+          path: ScreenSignUps.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenSignUps(),
+        ),
+        GoRoute(
+          path: ScreenTasks.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenTasks(),
+        ),
+        GoRoute(
+          path: ScreenProfileEdit.routeName,
+          builder: (context, state) => const ScreenProfileEdit(),
+        ),
+        GoRoute(
+          path: WidgetPrimaryScaffold.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const WidgetPrimaryScaffold(),
+        ),
+        GoRoute(
+          path: ScreenHome.routeName,
+          builder: (BuildContext context, GoRouterState state) => ScreenHome(),
+        ),
+        GoRoute(
+          path: ScreenAlternate.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              ScreenAlternate(),
+        ),
+        GoRoute(
+          path: CalendarScreen.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              CalendarScreen(),
+        ),
+      ],
+      errorBuilder: (context, state) => Scaffold(
+        body: Center(
+          child: Text('Error: ${state.error}'),
+        ),
       ),
-      GoRoute(
-        path: ScreenPeople.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            const ScreenPeople(),
-      ),
-      GoRoute(
-        path: ScreenFiles.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            const ScreenFiles(),
-      ),
-      GoRoute(
-        path: ScreenForms.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            const ScreenForms(),
-      ),
-      GoRoute(
-        path: ScreenSignUps.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            const ScreenSignUps(),
-      ),
-      GoRoute(
-        path: ScreenTasks.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            const ScreenTasks(),
-      ),
-      GoRoute(
-        path: ScreenProfileEdit.routeName,
-        builder: (context, state) => const ScreenProfileEdit(),
-      ),
-      GoRoute(
-        path: WidgetPrimaryScaffold.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            const WidgetPrimaryScaffold(),
-      ),
-      GoRoute(
-        path: ScreenHome.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenHome(),
-      ),
-      GoRoute(
-        path: ScreenAlternate.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenAlternate(),
-      ),
-      GoRoute(
-        path: CalendarScreen.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            CalendarScreen(),
-      ),
-    ],
-  );
+    );
+  }
 
   //////////////////////////////////////////////////////////////////////////
-  // Primary Flutter method overriden which describes the layout
+  // Primary Flutter method overridden which describes the layout
   // and bindings for this widget.
   //////////////////////////////////////////////////////////////////////////
   @override
