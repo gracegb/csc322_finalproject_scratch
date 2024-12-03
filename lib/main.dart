@@ -9,7 +9,6 @@
 //////////////////////////////////////////////////////////////////////////
 // Imports
 //////////////////////////////////////////////////////////////////////////
-// Dart imports
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
@@ -41,8 +40,10 @@ import 'theme/theme.dart';
 final ProviderContainer providerContainer = ProviderContainer();
 
 // Create providers
-final providerUserProfile = ChangeNotifierProvider<ProviderUserProfile>((ref) => ProviderUserProfile());
-final providerAuth = ChangeNotifierProvider<ProviderAuth>((ref) => ProviderAuth());
+final providerUserProfile =
+    ChangeNotifierProvider<ProviderUserProfile>((ref) => ProviderUserProfile());
+final providerAuth =
+    ChangeNotifierProvider<ProviderAuth>((ref) => ProviderAuth());
 final providerTts = ChangeNotifierProvider<ProviderTts>((ref) {
   final userProfile = ref.watch(providerUserProfile);
   return ProviderTts(userProfile);
@@ -52,17 +53,19 @@ final providerTts = ChangeNotifierProvider<ProviderTts>((ref) {
 // MAIN entry point to start app.
 //////////////////////////////////////////////////////////////////////////
 Future<void> main() async {
-  // Initialize widgets and firebase
+  // Initialize widgets and Firebase
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase with the default options
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform, name: 'Csc322');
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform, name: 'Csc322');
 
   // Initialize the app directory
   await UtilFile.init();
 
   // Get references to providers that will be needed in other providers
-  final ProviderUserProfile userProfileProvider = providerContainer.read(providerUserProfile);
+  final ProviderUserProfile userProfileProvider =
+      providerContainer.read(providerUserProfile);
   final ProviderAuth authProvider = providerContainer.read(providerAuth);
 
   // Initialize providers
@@ -70,7 +73,8 @@ Future<void> main() async {
   authProvider.initProviders(userProfileProvider);
 
   // Run the app
-  runApp(UncontrolledProviderScope(container: providerContainer, child: MyApp()));
+  runApp(UncontrolledProviderScope(
+      container: providerContainer, child: MyApp()));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -87,59 +91,78 @@ class MyApp extends StatefulWidget {
 // The actual STATE which is managed by the above widget.
 //////////////////////////////////////////////////////////////////////////
 class _MyAppState extends State<MyApp> {
-  // The "instance variables" managed in this state
-  // NONE
+  // Define the router
+  late final GoRouter _router;
 
-  // Router
-  final GoRouter _router = GoRouter(
-    initialLocation: ScreenLoginValidation.routeName,
-    routes: [
-      GoRoute(
-        path: ScreenLoginValidation.routeName,
-        builder: (context, state) => const ScreenLoginValidation(),
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize GoRouter
+    _router = GoRouter(
+      initialLocation: ScreenLoginValidation.routeName,
+      routes: [
+        GoRoute(
+          path: ScreenLoginValidation.routeName,
+          builder: (context, state) => const ScreenLoginValidation(),
+        ),
+        GoRoute(
+          path: ScreenPeople.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenPeople(),
+        ),
+        GoRoute(
+          path: ScreenFiles.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenFiles(),
+        ),
+        GoRoute(
+          path: ScreenForms.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenForms(),
+        ),
+        GoRoute(
+          path: ScreenSignUps.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenSignUps(),
+        ),
+        GoRoute(
+          path: ScreenTasks.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScreenTasks(),
+        ),
+        GoRoute(
+          path: ScreenProfileEdit.routeName,
+          builder: (context, state) => const ScreenProfileEdit(),
+        ),
+        GoRoute(
+          path: WidgetPrimaryScaffold.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              const WidgetPrimaryScaffold(),
+        ),
+        GoRoute(
+          path: ScreenHome.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              ScreenHome(),
+        ),
+        GoRoute(
+          path: ScreenAlternate.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              ScreenAlternate(),
+        ),
+        GoRoute(
+          path: CalendarScreen.routeName,
+          builder: (BuildContext context, GoRouterState state) =>
+              CalendarScreen(),
+        ),
+      ],
+      errorBuilder: (context, state) => Scaffold(
+        body: Center(
+          child: Text('Error: ${state.error}'),
+        ),
       ),
-      GoRoute(
-        path: ScreenPeople.routeName,
-        builder: (BuildContext context, GoRouterState state) => const ScreenPeople(),
-      ),
-      GoRoute(
-        path: ScreenFiles.routeName,
-        builder: (BuildContext context, GoRouterState state) => const ScreenFiles(),
-      ),
-      GoRoute(
-        path: ScreenForms.routeName,
-        builder: (BuildContext context, GoRouterState state) => const ScreenForms(),
-      ),
-      GoRoute(
-        path: ScreenSignUps.routeName,
-        builder: (BuildContext context, GoRouterState state) => const ScreenSignUps(),
-      ),
-      GoRoute(
-        path: ScreenTasks.routeName,
-        builder: (BuildContext context, GoRouterState state) => const ScreenTasks(),
-      ),
-      GoRoute(
-        path: ScreenProfileEdit.routeName,
-        builder: (context, state) => const ScreenProfileEdit(),
-      ),
-      GoRoute(
-        path: WidgetPrimaryScaffold.routeName,
-        builder: (BuildContext context, GoRouterState state) => const WidgetPrimaryScaffold(),
-      ),
-      GoRoute(
-        path: ScreenHome.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenHome(),
-      ),
-      GoRoute(
-        path: ScreenAlternate.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenAlternate(),
-      ),
-      GoRoute(
-        path: CalendarScreen.routeName,
-        builder: (BuildContext context, GoRouterState state) => CalendarScreen(),
-      ),
-    ],
-  );
+    );
+  }
 
   //////////////////////////////////////////////////////////////////////////
   // Primary Flutter method overriden which describes the layout

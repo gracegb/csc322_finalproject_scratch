@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ScreenSignUps extends ConsumerStatefulWidget {
   const ScreenSignUps({super.key});
 
-  static const routeName = '/signUps';
+  static const routeName = '/signups';
 
   @override
   ConsumerState<ScreenSignUps> createState() => _ScreenSignUpsState();
