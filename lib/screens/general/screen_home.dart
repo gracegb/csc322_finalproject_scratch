@@ -8,7 +8,7 @@ import '../../widgets/home/widget_home_chats.dart';
 
 // Define HomeEvent class
 class HomeEvent {
-  final String time;
+  final DateTime time;
   final String label;
   final String location;
   final Color color;
@@ -48,26 +48,33 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
 
 Future<void> _fetchEventsForSelectedDay() async {
   final googleAuth = ref.read(googleSignInProvider);
+
+  // Skip if not signed in
   if (!googleAuth.isSignedIn) return;
 
   final currentDay = _selectedDay ?? DateTime.now();
-  final events = await fetchEventsForDay(currentDay, googleAuth.user);
+  
+  // Fetch events for the selected day
+  final fetchedEvents = await fetchEventsForDay(currentDay, googleAuth.user);
 
   if (mounted) {
     setState(() {
-      _events[currentDay] = events.map((event) {
+      // Convert API events into `HomeEvent` objects
+      _events[currentDay] = fetchedEvents.map((event) {
         return HomeEvent(
           time: event.startTime != null
-              ? "${event.startTime!.hour}:${event.startTime!.minute.toString().padLeft(2, '0')}"
-              : "Unknown Time",
+              ? event.startTime!.toLocal() // Convert to local time
+              : DateTime(currentDay.year, currentDay.month, currentDay.day),
           label: event.title,
           location: event.location ?? "No Location",
-          color: Color(0xFFB3E5FC), // Assign a default color
+          color: Color(0xFFB3E5FC), // Default color for events
         );
       }).toList();
     });
   }
 }
+
+
 
 
   String _getMonth(int monthIndex) {
