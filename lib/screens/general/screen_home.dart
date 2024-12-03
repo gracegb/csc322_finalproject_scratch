@@ -46,13 +46,14 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
     }
   }
 
-  Future<void> _fetchEventsForSelectedDay() async {
-    final googleAuth = ref.read(googleSignInProvider);
-    if (!googleAuth.isSignedIn) return;
+Future<void> _fetchEventsForSelectedDay() async {
+  final googleAuth = ref.read(googleSignInProvider);
+  if (!googleAuth.isSignedIn) return;
 
-    final currentDay = _selectedDay ?? DateTime.now();
-    final events = await fetchEventsForDay(currentDay, googleAuth.user);
+  final currentDay = _selectedDay ?? DateTime.now();
+  final events = await fetchEventsForDay(currentDay, googleAuth.user);
 
+  if (mounted) {
     setState(() {
       _events[currentDay] = events.map((event) {
         return HomeEvent(
@@ -66,6 +67,8 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
       }).toList();
     });
   }
+}
+
 
   String _getMonth(int monthIndex) {
     const months = [
